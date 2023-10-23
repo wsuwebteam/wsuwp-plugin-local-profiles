@@ -1,0 +1,13 @@
+{
+    "name": "wsuwp-plugin-local-profiles",
+    "scripts": {
+        "start": "wp-scripts start assets/src/editor.js --output-path=assets/dist/",
+        "build": "wp-scripts build assets/src/editor.js --output-path=assets/dist/"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@wordpress/scripts": "^24.4.0",
+        "lodash": "^4.17.21"
+    }
+}
