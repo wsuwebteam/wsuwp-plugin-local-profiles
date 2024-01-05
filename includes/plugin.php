@@ -34,7 +34,7 @@ class Plugin {
 
 		require_once __DIR__ . '/sitemap.php';
 		require_once __DIR__ . '/view-profile.php';
-		require_once __DIR__ . '/scripts.php';
+		//require_once __DIR__ . '/scripts.php';
 
 	}
 

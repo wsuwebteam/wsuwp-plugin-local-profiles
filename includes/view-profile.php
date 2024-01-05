@@ -19,6 +19,8 @@ class View_Profile {
 
 		add_filter( 'the_content', array( __CLASS__, 'filter_content' ), 1 );
 
+		add_action( 'init', array( __CLASS__, 'add_rewrite' ), 1 );
+
 	}
 
 	public static function remove_menu_fitler( $nav_menu, $args ) {
@@ -66,7 +68,19 @@ class View_Profile {
 
 		} else {
 
-			$profile = new Profile( $nid );
+			global $post;
+
+			$people_blocks = People_Block::get_people_block_recursive( parse_blocks( $post->post_content ) );
+
+			$profile_source = false;
+
+			if ( ! empty( $people_blocks ) && ! empty( $people_blocks[0]['attrs']['custom_data_source'] ) ) {
+
+				$profile_source = $people_blocks[0]['attrs']['custom_data_source'];
+
+			}
+
+			$profile = new Profile( $nid, $profile_source );
 
 			self::$profiles[ $nid ] = $profile;
 
@@ -100,7 +114,6 @@ class View_Profile {
 
 	}
 
-
 	public static function add_rewrite() {
 
 		add_rewrite_rule(
@@ -108,6 +121,13 @@ class View_Profile {
 			'index.php?pagename=$matches[1]&wsuprofile=$matches[2]',
 			'top'
 		);
+
+	}
+
+
+	public static function flush_add_rewrite() {
+
+		self::add_rewrite();
 	
 		// Flush the rewrite rules
 		flush_rewrite_rules();
