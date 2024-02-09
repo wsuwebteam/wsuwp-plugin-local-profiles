@@ -1,5 +1,8 @@
 <?php namespace WSUWP\Plugin\Gutenberg;?>
 <div class="wsu-profile">
+	<?php if ( defined( 'TTFMAKE_VERSION' ) ) : ?>
+		<h1><?php echo wp_kses_post( $profile->get( 'name' ) ); ?></h1>
+	<?php endif; ?>
 	<div class="wsu-profile__photo-container">
 		<img src="<?php echo esc_url( $profile->get( 'photo' ) ); ?>" />
 	</div>

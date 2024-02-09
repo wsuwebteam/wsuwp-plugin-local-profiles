@@ -13,6 +13,8 @@ class View_Profile {
 
 		add_filter( 'the_title', array( __CLASS__, 'filter_title' ), 1 );
 
+		add_filter( 'document_title_parts', array( __CLASS__, 'filter_page_title' ), 999999 );
+
 		add_filter( 'wp_nav_menu_items', array( __CLASS__, 'add_menu_fitler' ), 10, 2 );
 
 		add_filter( 'pre_wp_nav_menu', array( __CLASS__, 'remove_menu_fitler' ), 10, 2 );
@@ -56,6 +58,23 @@ class View_Profile {
 		}
 
 		return $title;
+
+	}
+
+
+	public static function filter_page_title( $title_parts ) {
+
+		$profile_nid = get_query_var( 'wsuprofile', false );
+
+		if ( is_singular() && ! is_admin() && is_main_query() && ! empty( $profile_nid ) ) {
+
+				$profile = self::get_profile( $profile_nid );
+
+				$title_parts['title'] = $profile->get( 'name' );
+
+		}
+
+		return $title_parts;
 
 	}
 
