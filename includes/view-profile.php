@@ -47,14 +47,15 @@ class View_Profile {
 
 	public static function filter_title( $title ) {
 
-		$profile_nid = get_query_var( 'wsuprofile', false );
+		if ( self::should_show_profile() ) {
 
-		if ( ! is_admin() && is_main_query() && ! empty( $profile_nid ) ) {
+			$profile = self::get_profile();
 
-				$profile = self::get_profile( $profile_nid );
+			if ( $profile ) {
 
 				$title = $profile->get( 'name' );
 
+			}
 		}
 
 		return $title;
@@ -68,7 +69,7 @@ class View_Profile {
 
 		if ( is_singular() && ! is_admin() && is_main_query() && ! empty( $profile_nid ) ) {
 
-				$profile = self::get_profile( $profile_nid );
+				$profile = self::get_profile();
 
 				$title_parts['title'] = $profile->get( 'name' );
 
@@ -79,44 +80,47 @@ class View_Profile {
 	}
 
 
-	protected static function get_profile( $nid ) {
+	protected static function get_profile( $nid = false ) {
 
-		if ( array_key_exists( $nid, self::$profiles ) ) {
+		$nid = ( ! empty( $nid ) ) ? $nid : get_query_var( 'wsuprofile', false );
 
-			return self::$profiles[ $nid ];
+		if ( ! empty( $nid ) ) {
 
-		} else {
+			if ( array_key_exists( $nid, self::$profiles ) ) {
 
-			global $post;
-
-			$people_blocks = People_Block::get_people_block_recursive( parse_blocks( $post->post_content ) );
-
-			$profile_source = false;
-
-			if ( ! empty( $people_blocks ) && ! empty( $people_blocks[0]['attrs']['custom_data_source'] ) ) {
-
-				$profile_source = $people_blocks[0]['attrs']['custom_data_source'];
-
+				return self::$profiles[ $nid ];
+	
+			} else {
+	
+				global $post;
+	
+				$people_blocks = People_Block::get_people_block_recursive( parse_blocks( $post->post_content ) );
+	
+				$profile_source = false;
+	
+				if ( ! empty( $people_blocks ) && ! empty( $people_blocks[0]['attrs']['custom_data_source'] ) ) {
+	
+					$profile_source = $people_blocks[0]['attrs']['custom_data_source'];
+	
+				}
+	
+				$profile = new Profile( $nid, $profile_source );
+	
+				self::$profiles[ $nid ] = $profile;
+	
+				return $profile;
+	
 			}
 
-			$profile = new Profile( $nid, $profile_source );
-
-			self::$profiles[ $nid ] = $profile;
-
-			return $profile;
-
 		}
-
 	}
 
 
 	public static function filter_content( $content ) {
 
-		$profile_nid = get_query_var( 'wsuprofile', false );
+		if ( self::should_show_profile() ) {
 
-		if ( ! is_admin() && is_main_query() && ! empty( $profile_nid ) && is_singular() ) {
-
-			$profile = self::get_profile( $profile_nid );
+			$profile = self::get_profile();
 
 			if ( $profile ) {
 
@@ -130,6 +134,32 @@ class View_Profile {
 		}
 
 		return $content;
+
+	}
+
+	private static function should_show_profile() {
+
+		$profile_nid = get_query_var( 'wsuprofile', false );
+
+		if ( ! is_admin() && ! empty( $profile_nid ) && is_singular() && is_main_query() && in_the_loop() ) {
+
+			$queried_object = get_queried_object();
+
+			if ( $queried_object instanceof \WP_Post ) {
+
+				$current_id = get_the_ID();
+
+				$queried_id = ( isset( $queried_object->ID ) ) ? $queried_object->ID : false;
+
+				if ( $current_id === $queried_id ) {
+
+					return true;
+
+				}
+			}
+		}
+
+		return false;
 
 	}
 
