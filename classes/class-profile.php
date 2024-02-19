@@ -2,19 +2,23 @@
 
 class Profile {
 
-	protected $response   = '';
-	protected $name       = '';
-	protected $first_name = '';
-	protected $last_name  = '';
-	protected $titles     = array();
-	protected $email      = '';
-	protected $phone      = '';
-	protected $office     = '';
-	protected $address    = '';
-	protected $degree     = '';
-	protected $website    = '';
-	protected $bio        = '';
-	protected $photo      = '';
+	protected $response          = '';
+	protected $name              = '';
+	protected $first_name        = '';
+	protected $last_name         = '';
+	protected $titles            = array();
+	protected $email             = '';
+	protected $phone             = '';
+	protected $office            = '';
+	protected $address           = '';
+	protected $degree            = '';
+	protected $website           = '';
+	protected $google_scholar_id = '';
+	protected $cv                = '';
+	protected $lab_website       = '';
+	protected $lab_name          = '';
+	protected $bio               = '';
+	protected $photo             = '';
 
 
 	public function get( $property, $default = '' ) {
@@ -42,6 +46,14 @@ class Profile {
 				return $this->degrees;
 			case 'website':
 				return $this->website;
+			case 'cv':
+				return $this->cv;
+			case 'google_scholar_id':
+				return $this->google_scholar_id;
+			case 'lab_website':
+				return $this->lab_website;
+			case 'lab_name':
+				return $this->lab_name;
 			case 'bio':
 				return $this->bio;
 			case 'photo':
@@ -59,20 +71,30 @@ class Profile {
 	}
 
 
-	public function __construct( $nid = false ) {
+	public function __construct( $nid = false, $source = false ) {
 
 		if ( $nid ) {
 
-			$this->set_remote_profile( $nid );
+			$this->set_remote_profile( $nid, $source );
 
 		}
 
 	}
 
 
-	public function set_remote_profile( $nid ) {
+	public function set_remote_profile( $nid, $source = false ) {
 
-		$request_url = 'https://people.wsu.edu/wp-json/peopleapi/v1/people?nid=' . $nid;
+		if ( ! empty( $source ) ) {
+
+			$source_array = explode( '?', $source );
+
+			$request_url = $source_array[0] . '?nid=' . $nid;
+
+		} else {
+
+			$request_url = 'https://people.wsu.edu/wp-json/peopleapi/v1/people?nid=' . $nid;
+
+		}
 
 		$response = wp_remote_request( $request_url );
 
@@ -86,21 +108,26 @@ class Profile {
 
 			if ( $profile ) {
 
-				$this->name       = ( ! empty( $profile['name'] ) ) ? $profile['name'] : '';
-				$this->first_name = ( ! empty( $profile['first_name'] ) ) ? $profile['first_name'] : '';
-				$this->last_name  = ( ! empty( $profile['last_name'] ) ) ? $profile['last_name'] : '';
-				$this->titles     = ( ! empty( $profile['title'] ) ) ? $profile['title'] : array();
-				$this->email      = ( ! empty( $profile['email'] ) ) ? $profile['email'] : '';
-				$this->phone      = ( ! empty( $profile['phone'] ) ) ? $profile['phone'] : '';
-				$this->office     = ( ! empty( $profile['office'] ) ) ? $profile['office'] : '';
-				$this->address    = ( ! empty( $profile['address'] ) ) ? $profile['address'] : '';
-				$this->degrees     = ( ! empty( $profile['degree'] ) ) ? $profile['degree'] : array();
-				$this->website    = ( ! empty( $profile['website'] ) ) ? $profile['website'] : '';
-				$this->bio        = ( ! empty( $profile['bio'] ) ) ? $profile['bio'] : '';
-				$this->photo      = ( ! empty( $profile['photo'] ) ) ? $profile['photo'] : '';
+				$this->name              = ( ! empty( $profile['name'] ) ) ? $profile['name'] : '';
+				$this->first_name        = ( ! empty( $profile['first_name'] ) ) ? $profile['first_name'] : '';
+				$this->last_name         = ( ! empty( $profile['last_name'] ) ) ? $profile['last_name'] : '';
+				$this->titles            = ( ! empty( $profile['title'] ) ) ? $profile['title'] : array();
+				$this->email             = ( ! empty( $profile['email'] ) ) ? $profile['email'] : '';
+				$this->phone             = ( ! empty( $profile['phone'] ) ) ? $profile['phone'] : '';
+				$this->office            = ( ! empty( $profile['office'] ) ) ? $profile['office'] : '';
+				$this->address           = ( ! empty( $profile['address'] ) ) ? $profile['address'] : '';
+				$this->degrees           = ( ! empty( $profile['degree'] ) ) ? $profile['degree'] : array();
+				$this->website           = ( ! empty( $profile['website'] ) ) ? $profile['website'] : '';
+				$this->bio               = ( ! empty( $profile['bio'] ) ) ? $profile['bio'] : '';
+				$this->photo             = ( ! empty( $profile['photo'] ) ) ? $profile['photo'] : '';
+				$this->google_scholar_id = ( ! empty( $profile['google_scholar_id'] ) ) ? $profile['google_scholar_id'] : '';
+				$this->cv                = ( ! empty( $profile['cv'] ) ) ? $profile['cv'] : '';
+				$this->lab_website       = ( ! empty( $profile['lab_website'] ) && ! empty( $profile['lab_website']['url'] ) ) ? $profile['lab_website']['url'] : '';
+				$this->lab_name          = ( ! empty( $profile['lab_website'] ) && ! empty( $profile['lab_website']['name'] ) ) ? $profile['lab_website']['name'] : 'View Lab Website';
 
 			}
 		}
 	}
 
 }
+

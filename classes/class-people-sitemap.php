@@ -13,7 +13,7 @@ class People_Sitemap extends \WP_Sitemaps_Provider {
 
 		$url_list = array( array() );
 
-		$profile_links = People_Sitemap::get_profile_links();
+		$profile_links = $this->get_profile_links();
 
 		if ( ! empty( $profile_links ) ) {
 
@@ -40,7 +40,7 @@ class People_Sitemap extends \WP_Sitemaps_Provider {
 	}
 
 
-	public static function get_profile_links() {
+	public function get_profile_links() {
 
 		$profile_links = array();
 

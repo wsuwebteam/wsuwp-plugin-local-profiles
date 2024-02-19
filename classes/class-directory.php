@@ -6,9 +6,10 @@ class Directory {
 
 		$nids = array();
 
-		if ( $custom_endpoint ) {
+		if ( is_array( $directory ) ) {
 
-			$request_url = $custom_endpoint;
+			$request_url = $directory['source'];
+			$directory_id = $directory['id'];
 
 		} else {
 

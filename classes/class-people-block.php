@@ -38,9 +38,15 @@ class People_Block {
 
 		foreach ( $people_blocks as $people_block ) {
 
-			if ( ! empty( $people_block['attrs']['indexProfiles'] ) && ! empty( $people_block['attrs']['directory'] ) ) {
+			if ( ! empty( $people_block['attrs']['indexProfiles'] ) && ! empty( $people_block['attrs']['custom_data_source'] ) ) {
 
-				$directories[] = $people_block['attrs']['directory']['id'];
+				$directories[] = array( 'id' => false, 'source' => $people_block['attrs']['custom_data_source'] );
+
+			} else if ( ! empty( $people_block['attrs']['indexProfiles'] ) && ! empty( $people_block['attrs']['directory'] ) ) {
+
+				$directory_id = $people_block['attrs']['directory']['id'];
+
+				$directories[] = $directory_id;
 
 			}
 		}

@@ -13,11 +13,15 @@ class View_Profile {
 
 		add_filter( 'the_title', array( __CLASS__, 'filter_title' ), 1 );
 
+		add_filter( 'document_title_parts', array( __CLASS__, 'filter_page_title' ), 999999 );
+
 		add_filter( 'wp_nav_menu_items', array( __CLASS__, 'add_menu_fitler' ), 10, 2 );
 
 		add_filter( 'pre_wp_nav_menu', array( __CLASS__, 'remove_menu_fitler' ), 10, 2 );
 
 		add_filter( 'the_content', array( __CLASS__, 'filter_content' ), 1 );
+
+		add_action( 'init', array( __CLASS__, 'add_rewrite' ), 1 );
 
 	}
 
@@ -58,6 +62,23 @@ class View_Profile {
 	}
 
 
+	public static function filter_page_title( $title_parts ) {
+
+		$profile_nid = get_query_var( 'wsuprofile', false );
+
+		if ( is_singular() && ! is_admin() && is_main_query() && ! empty( $profile_nid ) ) {
+
+				$profile = self::get_profile( $profile_nid );
+
+				$title_parts['title'] = $profile->get( 'name' );
+
+		}
+
+		return $title_parts;
+
+	}
+
+
 	protected static function get_profile( $nid ) {
 
 		if ( array_key_exists( $nid, self::$profiles ) ) {
@@ -66,7 +87,19 @@ class View_Profile {
 
 		} else {
 
-			$profile = new Profile( $nid );
+			global $post;
+
+			$people_blocks = People_Block::get_people_block_recursive( parse_blocks( $post->post_content ) );
+
+			$profile_source = false;
+
+			if ( ! empty( $people_blocks ) && ! empty( $people_blocks[0]['attrs']['custom_data_source'] ) ) {
+
+				$profile_source = $people_blocks[0]['attrs']['custom_data_source'];
+
+			}
+
+			$profile = new Profile( $nid, $profile_source );
 
 			self::$profiles[ $nid ] = $profile;
 
@@ -100,7 +133,6 @@ class View_Profile {
 
 	}
 
-
 	public static function add_rewrite() {
 
 		add_rewrite_rule(
@@ -108,6 +140,13 @@ class View_Profile {
 			'index.php?pagename=$matches[1]&wsuprofile=$matches[2]',
 			'top'
 		);
+
+	}
+
+
+	public static function flush_add_rewrite() {
+
+		self::add_rewrite();
 	
 		// Flush the rewrite rules
 		flush_rewrite_rules();
