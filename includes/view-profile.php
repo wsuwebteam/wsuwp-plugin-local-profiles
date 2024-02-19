@@ -11,7 +11,7 @@ class View_Profile {
 			return $query_vars;
 		} );
 
-		add_filter( 'the_title', array( __CLASS__, 'filter_title' ), 1 );
+		add_filter( 'the_title', array( __CLASS__, 'filter_title' ), 1, 2 );
 
 		add_filter( 'document_title_parts', array( __CLASS__, 'filter_page_title' ), 999999 );
 
@@ -45,9 +45,9 @@ class View_Profile {
 	}
 
 
-	public static function filter_title( $title ) {
+	public static function filter_title( $title, $post_id = false ) {
 
-		if ( self::should_show_profile() ) {
+		if ( self::should_show_profile( $post_id ) ) {
 
 			$profile = self::get_profile();
 
@@ -137,7 +137,7 @@ class View_Profile {
 
 	}
 
-	private static function should_show_profile() {
+	private static function should_show_profile( $post_id = false ) {
 
 		$profile_nid = get_query_var( 'wsuprofile', false );
 
@@ -147,7 +147,7 @@ class View_Profile {
 
 			if ( $queried_object instanceof \WP_Post ) {
 
-				$current_id = get_the_ID();
+				$current_id = ( ! empty( $post_id ) ) ? $post_id : get_the_ID();
 
 				$queried_id = ( isset( $queried_object->ID ) ) ? $queried_object->ID : false;
 
