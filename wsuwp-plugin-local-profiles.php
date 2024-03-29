@@ -3,7 +3,7 @@
  * Plugin Name: WSUWP Display Local People Profiles
  * Plugin URI: https://github.com/wsuwebteam/wsuwp-plugin-local-profiles
  * Description: Include people profiles on site & in search
- * Version: 1.0.3
+ * Version: 1.0.4
  * Requires PHP: 7.0
  * Author: Washington State University, Danial Bleile
  * Author URI: https://web.wsu.edu/
@@ -16,7 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'WSUWPPLUGINLOCALPROFILES', '1.0.3' );
+define( 'WSUWPPLUGINLOCALPROFILES', '1.0.4' );
 
 // Initiate plugin
 require_once __DIR__ . '/includes/plugin.php';
