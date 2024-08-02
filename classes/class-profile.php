@@ -98,6 +98,12 @@ class Profile {
 
 		$response = wp_remote_request( $request_url );
 
+		if ( isset( $_REQUEST['wp_debug_test'] ) ) {
+
+			var_dump( $response );
+
+		} 
+
 		if ( $response ) {
 
 			$body = json_decode( wp_remote_retrieve_body( $response ), true );
