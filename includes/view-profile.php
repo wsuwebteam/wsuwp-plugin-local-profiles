@@ -103,8 +103,24 @@ class View_Profile {
 					$profile_source = $people_blocks[0]['attrs']['custom_data_source'];
 	
 				}
+
+				if ( ! empty( $people_blocks ) ) {
+
+					if ( ! empty( $people_blocks[0]['attrs']['custom_data_source'] ) ) {
 	
-				$profile = new Profile( $nid, $profile_source );
+						$profile_source = $people_blocks[0]['attrs']['custom_data_source'];
+		
+					}
+
+					if ( ! empty( $people_blocks[0]['attrs']['directory'] ) ) {
+	
+						$directory = $people_blocks[0]['attrs']['directory'];
+		
+					}
+
+				}
+	
+				$profile = new Profile( $nid, $profile_source, $directory );
 	
 				self::$profiles[ $nid ] = $profile;
 	
