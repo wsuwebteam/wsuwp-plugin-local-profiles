@@ -119,8 +119,10 @@ class View_Profile {
 					}
 
 				}
+
+				$block_args = ( ! empty( $people_blocks[0]['attrs'] ) ) ? $people_blocks[0]['attrs'] : array();
 	
-				$profile = new Profile( $nid, $profile_source, $directory );
+				$profile = new Profile( $nid, $profile_source, $directory, $block_args );
 	
 				self::$profiles[ $nid ] = $profile;
 	
