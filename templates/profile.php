@@ -1,11 +1,18 @@
-<?php namespace WSUWP\Plugin\Gutenberg;?>
+<?php namespace WSUWP\Plugin\Gutenberg;
+
+$block_args = $profile->get( 'block_args' );
+$photo = ( ! empty( $profile->get('photo_large') ) ) ? $profile->get('photo_large') : $profile->get('photo');
+
+?>
 <div class="wsu-profile">
 	<?php if ( defined( 'TTFMAKE_VERSION' ) ) : ?>
 		<h1><?php echo wp_kses_post( $profile->get( 'name' ) ); ?></h1>
 	<?php endif; ?>
+	<?php if ( ! empty( $photo ) ) : ?>
 	<div class="wsu-profile__photo-container">
-		<img src="<?php echo esc_url( $profile->get( 'photo' ) ); ?>" />
+		<img src="<?php echo esc_url( $photo ); ?>" />
 	</div>
+	<?php endif; ?>
 	<div class="wsu-profile__details-container">
 		<ol class="wsu-profile__titles">
 			<?php foreach ( $profile->get( 'titles', array() ) as $index => $person_title ) : ?>
@@ -14,6 +21,11 @@
 			</li>
 			<?php endforeach; ?>
 		</ol>
+		<?php if ( isset( $block_args['filters'] ) && in_array('directory', $block_args['filters'] ) && $profile->has( 'directories' ) ) : ?><ul class="wsu-profile__meta wsu-meta-directories">
+			<?php foreach ( $profile->get( 'directories', array() ) as $index => $directory ) : ?>
+			<li><?php echo sanitize_text_field( $directory['name'] ) ?></li>
+			<?php endforeach; ?>
+		</ul><?php endif; ?>
 		<?php if ( $profile->has( 'email' ) ) : ?><div class="wsu-profile__meta wsu-meta-email wsu-meta--icon-crimson">
 			<span class="wsu-screen-reader-only">Email Address</span><a href="mailto:<?php echo esc_attr( $profile->get( 'email' ) ); ?>"><?php echo wp_kses_post( $profile->get( 'email' ) ); ?></a>
 		</div><?php endif; ?>

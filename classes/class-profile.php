@@ -2,6 +2,7 @@
 
 class Profile {
 
+	protected $block_args        = array();
 	protected $response          = '';
 	protected $name              = '';
 	protected $first_name        = '';
@@ -19,11 +20,15 @@ class Profile {
 	protected $lab_name          = '';
 	protected $bio               = '';
 	protected $photo             = '';
+	protected $photo_large       = '';
+	protected $directories       = array();
 
 
 	public function get( $property, $default = '' ) {
 
 		switch ( $property ) {
+			case 'block_args':
+				return $this->block_args;
 			case 'response':
 				return $this->response;
 			case 'name':
@@ -58,6 +63,10 @@ class Profile {
 				return $this->bio;
 			case 'photo':
 				return $this->photo;
+			case 'photo_large':
+				return $this->photo_large;
+			case 'directories':
+				return $this->directories;
 			default:
 				return $default;
 		}
@@ -71,18 +80,20 @@ class Profile {
 	}
 
 
-	public function __construct( $nid = false, $source = false ) {
+	public function __construct( $nid = false, $source = false, $directory = false, $block_args = array() ) {
+
+		$this->block_args = $block_args;
 
 		if ( $nid ) {
 
-			$this->set_remote_profile( $nid, $source );
+			$this->set_remote_profile( $nid, $source, $directory);
 
 		}
 
 	}
 
 
-	public function set_remote_profile( $nid, $source = false ) {
+	public function set_remote_profile( $nid, $source = false, $directory = false ) {
 
 		if ( ! empty( $source ) ) {
 
@@ -96,13 +107,13 @@ class Profile {
 
 		}
 
+		if ( ! empty( $directory['id'] ) ) {
+
+			$request_url .= '&directory=' . $directory['id'] . '&directory_inherit=all';
+
+		}
+
 		$response = wp_remote_request( $request_url );
-
-		if ( isset( $_REQUEST['wp_debug_test'] ) ) {
-
-			var_dump( $response );
-
-		} 
 
 		if ( $response ) {
 
@@ -126,10 +137,12 @@ class Profile {
 				$this->website           = ( ! empty( $profile['website'] ) ) ? $profile['website'] : '';
 				$this->bio               = ( ! empty( $profile['bio'] ) ) ? $profile['bio'] : '';
 				$this->photo             = ( ! empty( $profile['photo'] ) ) ? $profile['photo'] : '';
+				$this->photo_large       = ( ! empty( $profile['photo_sizes']['large'] ) ) ? $profile['photo_sizes']['large'] : '';
 				$this->google_scholar_id = ( ! empty( $profile['google_scholar_id'] ) ) ? $profile['google_scholar_id'] : '';
 				$this->cv                = ( ! empty( $profile['cv'] ) ) ? $profile['cv'] : '';
 				$this->lab_website       = ( ! empty( $profile['lab_website'] ) && ! empty( $profile['lab_website']['url'] ) ) ? $profile['lab_website']['url'] : '';
 				$this->lab_name          = ( ! empty( $profile['lab_website'] ) && ! empty( $profile['lab_website']['name'] ) ) ? $profile['lab_website']['name'] : 'View Lab Website';
+				$this->directories       = ( ! empty( $profile['directories'] ) ) ? $profile['directories'] : array();
 
 			}
 		}
