@@ -144,6 +144,12 @@ class Profile {
 				$this->lab_name          = ( ! empty( $profile['lab_website'] ) && ! empty( $profile['lab_website']['name'] ) ) ? $profile['lab_website']['name'] : 'View Lab Website';
 				$this->directories       = ( ! empty( $profile['directories'] ) ) ? $profile['directories'] : array();
 
+				if ( empty( $this->photo_large ) && ! empty( $profile['photo_sizes']['full'] ) ) {
+
+					$this->photo_large = $profile['photo_sizes']['full'];
+
+				}
+
 			}
 		}
 	}
