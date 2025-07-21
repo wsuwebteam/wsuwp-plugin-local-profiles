@@ -16,7 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'WSUWPPLUGINLOCALPROFILES', '1.0.5' );
+define( 'WSUWPPLUGINLOCALPROFILES', '1.0.6' );
 
 // Initiate plugin
 require_once __DIR__ . '/includes/plugin.php';
